@@ -1,3 +1,5 @@
+Version: 1.1
+
 <!-- HTML Markup for the game interface -->
 <div id="game">
   <div id="score">Score: <span id="score-value">0</span></div>
