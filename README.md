@@ -1,75 +1,48 @@
-<!-- HTML Markup for the prize wheel -->
-<div id="prize-wheel">
-  <div class="outer-circle">
-    <div class="inner-circle">
-      <!-- Add a div element for each prize section -->
-      <div class="prize-section">Prize 1</div>
-      <div class="prize-section">Prize 2</div>
-      <div class="prize-section">Prize 3</div>
-      <!-- Add additional prize sections as needed -->
-    </div>
-  </div>
-</div>
+<!-- Add a video element to display the webcam stream -->
+<video id="webcam" width="320" height="240"></video>
 
-<!-- Add a button to spin the wheel -->
-<button id="spin-button">Spin the wheel</button>
+<!-- Add a canvas element to draw the face detection results -->
+<canvas id="overlay" width="320" height="240"></canvas>
 
-<!-- Style the prize wheel using CSS -->
-<style>
-  #prize-wheel {
-    position: relative;
-    width: 300px;
-    height: 300px;
-  }
-
-  .outer-circle {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 2px solid black;
-    border-radius: 50%;
-    overflow: hidden;
-  }
-
-  .inner-circle {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    height: 90%;
-    border: 2px solid black;
-    border-radius: 50%;
-  }
-
-  .prize-section {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 50%;
-    height: 50%;
-    text-align: center;
-    line-height: 150px;
-    font-size: 24px;
-  }
-</style>
-
-<!-- Add the JavaScript to spin the wheel -->
+<!-- Add a script to access the webcam and draw the face detection results -->
 <script>
-  // Get the spin button and prize wheel elements
-  const spinButton = document.getElementById('spin-button');
-  const prizeWheel = document.getElementById('prize-wheel');
+  // Get the video and canvas elements
+  const video = document.getElementById('webcam');
+  const canvas = document.getElementById('overlay');
+  const context = canvas.getContext('2d');
 
-  // Add a click event listener to the spin button
-  spinButton.addEventListener('click', spinWheel);
+  // Define the face detection options
+  const options = {
+    minConfidence: 0.5
+  };
 
-  function spinWheel() {
-    // Generate a random number between 0 and 360
-    const spinAngle = Math.floor(Math.random() * 360);
+  // Create a FaceDetector object
+  const detector = new FaceDetector(options);
 
-    // Set the prize wheel's transform to the random angle
-    prizeWheel.style.transform = `rotate(${spinAngle}deg)`;
-  }
+  // Get the user's webcam stream
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+      // Display the stream in the video element
+      video.srcObject = stream;
+
+      // Start a loop to detect and draw faces
+      setInterval(async () => {
+        // Detect the faces in the video frame
+        const faces = await detector.detect(video);
+
+        // Clear the canvas
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw a rectangle around each face
+        faces.forEach(face => {
+          const { width, height, top, left } = face.boundingBox;
+          context.strokeStyle = 'yellow';
+          context.lineWidth = 2;
+          context.strokeRect(left, top, width, height);
+        });
+      }, 1000);
+    })
+    .catch(error => {
+      console.error(error);
+    });
 </script>
