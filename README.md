@@ -8,6 +8,10 @@
     <button class="upgrade-button" data-cost="1000" data-multiplier="5">Upgrade 2</button>
     <!-- Add additional upgrade buttons as needed -->
   </div>
+  <div id="save-section">
+    <button id="save-button">Save</button>
+    <input id="save-code" type="text" placeholder="Save code" />
+  </div>
 </div>
 
 <!-- Style the game interface using CSS -->
@@ -44,6 +48,31 @@
   .upgrade-button[disabled] {
     background-color: gray;
   }
+
+  #save-section {
+    display: flex;
+    align-items: center;
+  }
+
+  #save-button,
+  #save-code {
+    height: 30px;
+    font-size: 18px;
+  }
+
+  #save-button {
+    margin-right: 10px;
+    background-color: lightyellow;
+    border: none;
+    border-radius: 10px;
+  }
+
+  #save-code {
+    flex-grow: 1;
+    padding: 0 10px;
+    border: 1px solid gray;
+    border-radius: 10px;
+  }
 </style>
 
 <!-- Add the JavaScript to handle the game logic -->
@@ -52,42 +81,11 @@
   const clickButton = document.getElementById('click-button');
   const scoreValue = document.getElementById('score-value');
   const upgrades = document.querySelectorAll('.upgrade-button');
+  const saveButton = document.getElementById('save-button');
+  const saveCode = document.getElementById('save-code');
 
   // Initialize the game state
   let score = 0;
   let multiplier = 1;
 
-  // Add a click event listener to the click button
-  clickButton.addEventListener('click', () => {
-    // Increment the score by the multiplier
-    score += multiplier;
-
-    // Update the score display
-    scoreValue.textContent = score;
-  });
-
-  // Add a click event listener to the upgrade buttons
-  upgrades.forEach(upgradeButton => {
-    upgradeButton.addEventListener('click', () => {
-      // Get the cost and multiplier for the upgrade
-      const cost = Number(upgradeButton.dataset.cost);
-      const newMultiplier = Number(upgradeButton.dataset.multiplier);
-
-      // Check if the player has enough points to purchase the upgrade
-      if (score >= cost) {
-        // Decrement the score by the cost
-        score -= cost;
-
-        // Update the multiplier and score display
-        multiplier = newMultiplier;
-        scoreValue.textContent = score;
-
-        // Enable the next upgrade button
-        const nextUpgradeButton = upgradeButton.nextElementSibling;
-        if (nextUpgradeButton) {
-          nextUpgradeButton.disabled = false;
-        }
-      }
-    });
-  });
-</script>
+  // Add a click event
